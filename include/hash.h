@@ -1,7 +1,13 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 
+
+#define HASH_SIZE 32
 
 typedef struct {
-    int length;
-}
+    uint8_t hash_v[HASH_SIZE];
+} digest_t;
+
+bool init_digest(digest_t *digest);
 
