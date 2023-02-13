@@ -16,4 +16,5 @@ add_subdirectory(test)
 
 enable_testing()
 add_test(NAME hash_test COMMAND hash_test)
+add_test(NAME map_test COMMAND map_test)
 
