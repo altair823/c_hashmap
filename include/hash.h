@@ -1,3 +1,6 @@
+#ifndef HASH_H
+#define HASH_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -11,3 +14,4 @@ typedef struct {
 
 bool init_digest(digest_t *digest);
 
+#endif // HASH_H
