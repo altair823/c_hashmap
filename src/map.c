@@ -40,3 +40,19 @@ void pushback(bucket_t *bucket, void *data) {
     _pushback_node(&bucket->linked_list, data);
     bucket->length++;
 }
+
+void *get(bucket_t *bucket, size_t index) {
+    if (bucket == NULL) {
+	return NULL;
+    }
+    node_t *cur = bucket->linked_list;
+    for (int i = 0; i < index; i++) {
+	if (cur->next_node == NULL) {
+	    return NULL;
+	} 
+	else {
+	    cur = cur->next_node;
+	}
+    }
+    return cur->data;
+}
