@@ -9,8 +9,8 @@ typedef struct _node_t {
 } node_t;
 
 node_t *create_linked_list();
-node_t *create_node(void *data);
-void pushback_node(node_t *head, void *data);
+node_t *_create_node(void *data);
+void _pushback_node(node_t **head, void *data);
 
 
 typedef struct {
@@ -19,4 +19,4 @@ typedef struct {
 } bucket_t;
 
 bucket_t *create_bucket();
-bool pushback(bucket_t *bucket);
+void pushback(bucket_t *bucket, void *data);
