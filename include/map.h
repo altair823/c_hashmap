@@ -20,4 +20,4 @@ typedef struct {
 
 bucket_t *create_bucket();
 void pushback(bucket_t *bucket, void *data);
-void *get(bucket_t *bucket, size_t index);
+void *get_from_bucket(bucket_t *bucket, size_t index);

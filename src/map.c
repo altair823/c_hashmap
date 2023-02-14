@@ -41,7 +41,7 @@ void pushback(bucket_t *bucket, void *data) {
     bucket->length++;
 }
 
-void *get(bucket_t *bucket, size_t index) {
+void *get_from_bucket(bucket_t *bucket, size_t index) {
     if (bucket == NULL) {
 	return NULL;
     }
