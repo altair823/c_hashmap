@@ -12,7 +12,7 @@ node_t *_create_node(void *data) {
     return new_node;
 }
 
-void _pushback_node(node_t **head, void *data) {
+void pushback_node(node_t **head, void *data) {
     // If linked list is empty,
     if (*head == NULL) {
 	*head = _create_node(data);
@@ -50,7 +50,7 @@ bucket_t *create_bucket() {
 }
 
 void pushback(bucket_t *bucket, void *data) {
-    _pushback_node(&bucket->linked_list, data);
+    pushback_node(&bucket->linked_list, data);
     bucket->length++;
 }
 

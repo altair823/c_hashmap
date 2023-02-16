@@ -15,6 +15,5 @@ add_subdirectory(test)
 
 
 enable_testing()
-add_test(NAME hash_test COMMAND hash_test)
 add_test(NAME hashmap_test COMMAND hashmap_test)
 

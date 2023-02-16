@@ -16,7 +16,7 @@ typedef struct _node_t {
 
 node_t *create_linked_list();
 node_t *_create_node(void *data);
-void _pushback_node(node_t **head, void *data);
+void pushback_node(node_t **head, void *data);
 void delete_linked_list(node_t **head);
 
 typedef struct {
