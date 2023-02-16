@@ -8,6 +8,8 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
 
 typedef struct _node_t {
     void *data;
@@ -29,6 +31,8 @@ void pushback(bucket_t *bucket, void *data);
 void *get_from_bucket(bucket_t *bucket, size_t index);
 void delete_bucket(bucket_t *bucket);
 
+void print_bucket(bucket_t *bucket);
+
 #define DEFAULT_BUCKET_COUNT 32
 
 /**
@@ -42,8 +46,13 @@ void delete_bucket(bucket_t *bucket);
 typedef struct {
     bucket_t **bucket_list;
     size_t length;
+    uint8_t *(*hash_func)(void *);
 } hashmap_t;
 
-hashmap_t *create_hashmap();
+hashmap_t *create_hashmap(uint8_t *(*hash_func)(void *));
+void put(hashmap_t *hashmap, void *key, void *value);
+uint64_t arr_to_uint(uint8_t *arr, size_t length);
+
+void print_all_bucket(hashmap_t *hashmap);
 
 #endif // HASH_MAP_H
