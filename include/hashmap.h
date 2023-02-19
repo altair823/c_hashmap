@@ -12,13 +12,14 @@
 #include <stdio.h>
 
 typedef struct _node_t {
-    void *data;
+    void *key;
+    void *value;
     struct _node_t *next_node;
 } node_t;
 
 node_t *create_linked_list();
-node_t *_create_node(void *data);
-void pushback_node(node_t **head, void *data);
+node_t *create_node(void *key, void *value);
+void pushback_node(node_t **head, node_t *node);
 void delete_linked_list(node_t **head);
 
 typedef struct {
@@ -27,8 +28,9 @@ typedef struct {
 } bucket_t;
 
 bucket_t *create_bucket();
-void pushback(bucket_t *bucket, void *data);
-void *get_from_bucket(bucket_t *bucket, size_t index);
+void pushback(bucket_t *bucket, void *key, void *value);
+node_t *get_from_bucket(bucket_t *bucket, size_t index);
+void *find_from_bucket(bucket_t *bucket, int (*cmp_key_func)(void *, void *), void *key);
 void delete_bucket(bucket_t *bucket);
 
 void print_bucket(bucket_t *bucket);
@@ -47,11 +49,17 @@ typedef struct {
     bucket_t **bucket_list;
     size_t length;
     uint8_t *(*hash_func)(void *);
+    int (*cmp_key)(void *, void *);
 } hashmap_t;
 
-hashmap_t *create_hashmap(uint8_t *(*hash_func)(void *));
+hashmap_t *create_hashmap(uint8_t *(*hash_func)(void *), int (*cmp_key)(void *, void *));
 void put(hashmap_t *hashmap, void *key, void *value);
+void *get(hashmap_t *hashmap, void *key);
+
+#define MAX_DIGEST_LEN_TO_USE 16
+size_t reduce_hash(uint8_t *digest, size_t length);
 uint64_t arr_to_uint(uint8_t *arr, size_t length);
+
 
 void print_all_bucket(hashmap_t *hashmap);
 

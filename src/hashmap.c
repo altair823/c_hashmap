@@ -5,17 +5,18 @@ node_t *create_linked_list() {
     return head;
 }
 
-node_t *_create_node(void *data) {
+node_t *create_node(void *key, void *value) {
     node_t *new_node = (node_t *)malloc(sizeof(node_t));
-    new_node->data = data;
+    new_node->key = key;
+    new_node->value = value;
     new_node->next_node = NULL;
     return new_node;
 }
 
-void pushback_node(node_t **head, void *data) {
+void pushback_node(node_t **head, node_t *node) {
     // If linked list is empty,
     if (*head == NULL) {
-    *head = _create_node(data);
+    *head = node;
     }
     // or, if linked list is not empty.
     else {
@@ -23,7 +24,7 @@ void pushback_node(node_t **head, void *data) {
     while (cur->next_node != NULL) {
         cur = cur->next_node;
     }
-    node_t *new_tail = _create_node(data);
+    node_t *new_tail = node;
     cur->next_node = new_tail;
     }
 }
@@ -49,25 +50,42 @@ bucket_t *create_bucket() {
     return new_bucket;
 }
 
-void pushback(bucket_t *bucket, void *data) {
-    pushback_node(&bucket->linked_list, data);
+void pushback(bucket_t *bucket, void *key, void *value) {
+    node_t *node = create_node(key, value);
+    pushback_node(&bucket->linked_list, node);
     bucket->length++;
 }
 
-void *get_from_bucket(bucket_t *bucket, size_t index) {
+node_t *get_from_bucket(bucket_t *bucket, size_t index) {
     if (bucket == NULL || index >= bucket->length) {
-    return NULL;
+        return NULL;
     }
     node_t *cur = bucket->linked_list;
     for (int i = 0; i < index; i++) {
-    if (cur->next_node == NULL) {
+        if (cur->next_node == NULL) {
+            return NULL;
+        } 
+        else {
+            cur = cur->next_node;
+        }
+    }
+    return cur;
+}
+
+void *find_from_bucket(bucket_t *bucket, int (*cmp_key_func)(void *, void *), void *key) {
+    if (bucket == NULL || key == NULL) {
         return NULL;
-    } 
-    else {
+    }
+    node_t *cur = bucket->linked_list;
+    while(1) {
+        if (cmp_key_func(key, cur->key) == 0){
+            return cur->value;
+        }
+        if (cur->next_node == NULL) {
+            return NULL;
+        }
         cur = cur->next_node;
     }
-    }
-    return cur->data;
 }
 
 void delete_bucket(bucket_t *bucket) {
@@ -86,7 +104,7 @@ void print_bucket(bucket_t *bucket) {
     }
 }
 
-hashmap_t *create_hashmap(uint8_t *(*hash_func)(void *)) {
+hashmap_t *create_hashmap(uint8_t *(*hash_func)(void *), int (*cmp_key)(void *, void *)) {
     hashmap_t *hashmap = (hashmap_t *)malloc(sizeof(hashmap_t));
     hashmap->bucket_list = (bucket_t **)malloc(sizeof(bucket_t*) * DEFAULT_BUCKET_COUNT);
     hashmap->length = DEFAULT_BUCKET_COUNT;
@@ -94,6 +112,7 @@ hashmap_t *create_hashmap(uint8_t *(*hash_func)(void *)) {
         hashmap->bucket_list[i] = create_bucket();
     }
     hashmap->hash_func = hash_func;
+    hashmap->cmp_key = cmp_key;
     return hashmap;
 }
 
@@ -115,9 +134,19 @@ void put(hashmap_t *hashmap, void *key, void *value) {
     } else {
         start_ptr = digest_size - 16;
     }
-    size_t index = arr_to_uint(digest + start_ptr, digest_size - start_ptr) % hashmap->length;
-    pushback(hashmap->bucket_list[index], value);
+    size_t index = reduce_hash(digest, digest_size) % hashmap->length;
+    pushback(hashmap->bucket_list[index], key, value);
     printf("%d\n", index);
+}
+
+size_t reduce_hash(uint8_t *digest, size_t length) {
+    unsigned int start_ptr = 0;
+    if (length < MAX_DIGEST_LEN_TO_USE) {
+        start_ptr = 0;
+    } else {
+        start_ptr = length - 16;
+    }
+    return arr_to_uint(digest + start_ptr, length - start_ptr);
 }
 
 uint64_t arr_to_uint(uint8_t *arr, size_t length) {
@@ -126,6 +155,19 @@ uint64_t arr_to_uint(uint8_t *arr, size_t length) {
         summary += (arr[i] << (i));
     }
     return summary;
+}
+
+void *get(hashmap_t *hashmap, void *key) {
+#ifdef HASH_SIZE
+    size_t digest_size = HASH_SIZE;
+#else
+    size_t digest_size = 8;
+#endif
+    size_t index = reduce_hash(hashmap->hash_func(key), digest_size) % hashmap->length;
+    if (hashmap->bucket_list[index] == NULL) {
+        return NULL;
+    }
+    return find_from_bucket(hashmap->bucket_list[index], hashmap->cmp_key, key);
 }
 
 void print_all_bucket(hashmap_t *hashmap) {
