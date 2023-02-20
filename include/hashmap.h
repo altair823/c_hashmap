@@ -6,10 +6,14 @@
 #ifndef HASH_MAP_H
 #define HASH_MAP_H
 
-#include <string.h>
+#define DEBUG 0
+
 #include <stdlib.h>
 #include <stdint.h>
+
+#if DEBUG == 1
 #include <stdio.h>
+#endif
 
 typedef struct _node_t {
     void *key;
@@ -33,7 +37,9 @@ node_t *get_from_bucket(bucket_t *bucket, size_t index);
 void *find_from_bucket(bucket_t *bucket, int (*cmp_key_func)(void *, void *), void *key);
 void delete_bucket(bucket_t *bucket);
 
+#if DEBUG == 1
 void print_bucket(bucket_t *bucket);
+#endif
 
 #define DEFAULT_BUCKET_COUNT 32
 
@@ -60,7 +66,8 @@ void *get(hashmap_t *hashmap, void *key);
 size_t reduce_hash(uint8_t *digest, size_t length);
 uint64_t arr_to_uint(uint8_t *arr, size_t length);
 
-
+#if DEBUG == 1
 void print_all_bucket(hashmap_t *hashmap);
+#endif
 
 #endif // HASH_MAP_H

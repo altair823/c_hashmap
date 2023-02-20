@@ -16,29 +16,29 @@ node_t *create_node(void *key, void *value) {
 void pushback_node(node_t **head, node_t *node) {
     // If linked list is empty,
     if (*head == NULL) {
-    *head = node;
+        *head = node;
     }
     // or, if linked list is not empty.
     else {
-    node_t *cur = *head;
+        node_t *cur = *head;
     while (cur->next_node != NULL) {
         cur = cur->next_node;
     }
     node_t *new_tail = node;
-    cur->next_node = new_tail;
+        cur->next_node = new_tail;
     }
 }
 
 void delete_linked_list(node_t **head) {
     if (*head == NULL) {
-    return;
+        return;
     }
     node_t *cur = *head;
     do {
-    node_t *next = cur->next_node;
-    cur->next_node = NULL;
-    free(cur);
-    cur = next;
+        node_t *next = cur->next_node;
+        cur->next_node = NULL;
+        free(cur);
+        cur = next;
     } while (cur != NULL); 
     *head = NULL;
 }
@@ -96,6 +96,7 @@ void delete_bucket(bucket_t *bucket) {
    bucket->length = 0;
 }
 
+#if DEBUG == 1
 void print_bucket(bucket_t *bucket) {
     if (bucket->length == 0) {
         printf("NULL\n");
@@ -103,6 +104,7 @@ void print_bucket(bucket_t *bucket) {
         printf("length: %d\n", bucket->length);
     }
 }
+#endif
 
 hashmap_t *create_hashmap(uint8_t *(*hash_func)(void *), int (*cmp_key)(void *, void *)) {
     hashmap_t *hashmap = (hashmap_t *)malloc(sizeof(hashmap_t));
@@ -136,7 +138,6 @@ void put(hashmap_t *hashmap, void *key, void *value) {
     }
     size_t index = reduce_hash(digest, digest_size) % hashmap->length;
     pushback(hashmap->bucket_list[index], key, value);
-    printf("%d\n", index);
 }
 
 size_t reduce_hash(uint8_t *digest, size_t length) {
@@ -170,6 +171,7 @@ void *get(hashmap_t *hashmap, void *key) {
     return find_from_bucket(hashmap->bucket_list[index], hashmap->cmp_key, key);
 }
 
+#if DEBUG == 1
 void print_all_bucket(hashmap_t *hashmap) {
     printf("hashmap size: %d\n", hashmap->length);
     for (size_t i = 0; i < hashmap->length; i++) {
@@ -177,3 +179,4 @@ void print_all_bucket(hashmap_t *hashmap) {
         print_bucket(hashmap->bucket_list[i]);
     }
 }
+#endif
