@@ -8,8 +8,6 @@ set(CMAKE_CXX_STANDARD 17)
 file(GLOB SOURCE
 	"${PROJECT_SOURCE_DIR}/src/*c"
     )
-add_executable(c_hashmap main.c ${SOURCE}) 
-target_include_directories(c_hashmap PUBLIC include)
 
 add_subdirectory(test)
 
